@@ -1,8 +1,7 @@
 import os
 
 
-def set_directory(filename):
-    os.chdir(os.path.dirname(filename))
+os.chdir(os.path.dirname(__file__))
 
 
 class Puzzle(object):
@@ -44,6 +43,3 @@ class Puzzle(object):
             assert test_result == test2
             real_result = self.part2(self.data)
             print( f'part2 real = {real_result}')
-
-
-set_directory(__file__)
