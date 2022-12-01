@@ -1,20 +1,24 @@
 import os
+import sys
 
 
 class Puzzle(object):
 
     def __init__(self, datafile: str = 'puzzle.data', testfile: str = 'puzzle.test'):
+        self.base = os.path.dirname(sys.argv[0])
+
         self.datafile = datafile
         self.testfile = testfile
-        self.data = []
-        self.test = []
+
+        self.data = None
+        self.test = None
+
+    def read_lines(self, filename: str) -> list[str]:
+        with open(os.path.join(self.base, filename), 'r') as df:
+            return [l.strip() for l in df.readlines()]
 
     def parse_data(self, filename):
-        return self.read_data(filename)
-
-    def read_data(self, filename: str) -> list[str]:
-        with open(filename, 'r') as df:
-            return [l.strip() for l in df.readlines()]
+        raise NotImplementedError('parse_data')
 
     def part1(self, data: list) -> int:
         raise NotImplementedError('part1')
