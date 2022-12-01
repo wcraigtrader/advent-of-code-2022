@@ -20,10 +20,10 @@ class Puzzle(object):
     def parse_data(self, filename):
         raise NotImplementedError('parse_data')
 
-    def part1(self, data: list) -> int:
+    def part1(self, data) -> int:
         raise NotImplementedError('part1')
 
-    def part2(self, data: list) -> int:
+    def part2(self, data) -> int:
         raise NotImplementedError('part2')
 
     def run(self, test1: int = None, test2: int = None) -> None:
