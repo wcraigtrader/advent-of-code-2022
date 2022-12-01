@@ -5,11 +5,6 @@ def set_directory(filename):
     os.chdir(os.path.dirname(filename))
 
 
-def read_lines(filename):
-    with open(filename, 'r') as df:
-        return [l.strip() for l in df.readlines()]
-
-
 class Puzzle(object):
 
     def __init__(self, datafile: str = 'puzzle.data', testfile: str = 'puzzle.test'):
