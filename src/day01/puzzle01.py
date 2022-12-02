@@ -11,10 +11,12 @@ class Day01(Puzzle):
 
         snacks = [0]
         for n in numbers:
-            if n:
-                snacks[-1] += n
-            else:
+            if n is None:
                 snacks.append(0)
+            else:
+                snacks[-1] += n
+
+        snacks.sort()
 
         return snacks
 
@@ -22,7 +24,6 @@ class Day01(Puzzle):
         return max(data)
 
     def part2(self, data) -> int:
-        data.sort()
         return sum(data[-3:])
 
 
