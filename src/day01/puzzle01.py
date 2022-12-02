@@ -1,7 +1,8 @@
 from common import *
 
 
-convert_to_int = lambda x: int(x) if x else None
+def convert_to_int(x): return int(x) if x else None
+
 
 class Day01(Puzzle):
 
@@ -23,6 +24,7 @@ class Day01(Puzzle):
     def part2(self, data) -> int:
         data.sort()
         return sum(data[-3:])
+
 
 puzzle = Day01()
 puzzle.run(24000, 45000)
