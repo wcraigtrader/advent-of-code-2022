@@ -34,13 +34,13 @@ class Puzzle(object):
         if test1 is not None:
             test_result = self.part1(self.test)
             print( f'part1 test = {test_result}')
-            assert test_result == test1
+            assert test_result == test1, f'Was {test_result}, should have been {test1}'
             real_result = self.part1(self.data)
             print( f'part1 real = {real_result}')
 
         if test2 is not None:
             test_result = self.part2(self.test)
             print( f'part2 test = {test_result}')
-            assert test_result == test2
+            assert test_result == test2, f'Was {test_result}, should have been {test2}'
             real_result = self.part2(self.data)
             print( f'part2 real = {real_result}')
