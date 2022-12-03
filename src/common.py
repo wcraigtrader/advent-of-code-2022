@@ -4,7 +4,7 @@ import sys
 
 class Puzzle(object):
 
-    def __init__(self, datafile: str = 'puzzle.data', testfile: str = 'puzzle.test'):
+    def __init__(self, datafile: str = 'real.data', testfile: str = 'test.data'):
         self.base = os.path.dirname(sys.argv[0])
 
         self.datafile = datafile
