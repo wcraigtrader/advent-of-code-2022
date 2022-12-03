@@ -56,9 +56,7 @@ class Day03(Puzzle):
     def part2(self, data) -> int:
         result = 0
 
-        elves_count = len(data)
-        for group in range(0, elves_count, 3):
-            sacks = data[group:group + 3]
+        for sacks in [data[i:i + 3] for i in range(0, len(data), 3)]:
             for badge in set(sacks[0].contents) & set(sacks[1].contents) & set(sacks[2].contents):
                 result += RuckSack.priority(badge)
 
