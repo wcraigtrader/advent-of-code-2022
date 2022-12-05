@@ -2,10 +2,11 @@
 
 from common import *
 
+
 class Day22(Puzzle):
-    
+
     def parse_data(self, filename):
-        return self.read_lines(filename)
+        return self.read_stripped(filename)
 
     def part1(self, data) -> int:
         return 0

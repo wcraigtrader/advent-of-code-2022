@@ -13,9 +13,13 @@ class Puzzle(object):
         self.data = None
         self.test = None
 
-    def read_lines(self, filename: str) -> list[str]:
+    def read_stripped(self, filename: str) -> list[str]:
         with open(os.path.join(self.base, filename), 'r') as df:
             return [l.strip() for l in df.readlines()]
+
+    def read_lines(self, filename: str) -> list[str]:
+        with open(os.path.join(self.base, filename), 'r') as df:
+            return df.readlines()
 
     def parse_data(self, filename):
         raise NotImplementedError('parse_data')
@@ -33,14 +37,14 @@ class Puzzle(object):
 
         if test1 is not None:
             test_result = self.part1(self.test)
-            print( f'part1 test = {test_result}')
+            print(f'part1 test = {test_result}')
             assert test_result == test1, f'Was {test_result}, should have been {test1}'
             real_result = self.part1(self.data)
-            print( f'part1 real = {real_result}')
+            print(f'part1 real = {real_result}')
 
         if test2 is not None:
             test_result = self.part2(self.test)
-            print( f'part2 test = {test_result}')
+            print(f'part2 test = {test_result}')
             assert test_result == test2, f'Was {test_result}, should have been {test2}'
             real_result = self.part2(self.data)
-            print( f'part2 real = {real_result}')
+            print(f'part2 real = {real_result}')

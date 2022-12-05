@@ -7,7 +7,7 @@ def convert_to_int(x): return int(x) if x else None
 class Day01(Puzzle):
 
     def parse_data(self, filename) -> list:
-        numbers = map(convert_to_int, self.read_lines(filename))
+        numbers = map(convert_to_int, self.read_stripped(filename))
 
         snacks = [0]
         for n in numbers:

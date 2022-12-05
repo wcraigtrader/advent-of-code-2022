@@ -46,7 +46,7 @@ class Advice:
 class Day02(Puzzle):
 
     def parse_data(self, filename):
-        return [Advice(*(line.split(' '))) for line in self.read_lines(filename)]
+        return [Advice(*(line.split(' '))) for line in self.read_stripped(filename)]
 
     def part1(self, data) -> int:
         return sum(match.score1 for match in data)

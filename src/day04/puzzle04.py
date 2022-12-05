@@ -36,7 +36,7 @@ class CleanupRange:
 class Day04(Puzzle):
 
     def parse_data(self, filename):
-        return [CleanupRange(line) for line in self.read_lines(filename)]
+        return [CleanupRange(line) for line in self.read_stripped(filename)]
 
     def part1(self, data) -> int:
         return sum(1 for datum in data if datum.wholly_contained)
