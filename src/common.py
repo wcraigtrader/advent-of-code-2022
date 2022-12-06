@@ -40,7 +40,7 @@ class Puzzle(object):
         real_result = method(self.data)
         print(f'{name} real = {real_result}')
 
-    def multi_test(self, name: str, expectations):
+    def multi_test(self, name: str, expectations: list):
         method = getattr(self, name)
 
         for i, (test, expected) in enumerate(zip(self.test, expectations), 1):
