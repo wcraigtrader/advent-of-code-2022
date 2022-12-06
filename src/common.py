@@ -13,13 +13,12 @@ class Puzzle(object):
         self.data = None
         self.test = None
 
-    def read_stripped(self, filename: str) -> list[str]:
-        with open(os.path.join(self.base, filename), 'r') as df:
-            return [l.strip() for l in df.readlines()]
-
     def read_lines(self, filename: str) -> list[str]:
         with open(os.path.join(self.base, filename), 'r') as df:
             return df.readlines()
+
+    def read_stripped(self, filename: str) -> list[str]:
+        return list(map(str.strip, self.read_lines(filename)))
 
     def parse_data(self, filename):
         raise NotImplementedError('parse_data')
