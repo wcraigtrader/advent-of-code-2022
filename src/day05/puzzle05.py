@@ -37,12 +37,12 @@ class Stacks:
             self.initial[number] = list()
 
         for level in lines[1:]:
-            for stack, pos in enumerate(range(1,len(level),4),1):
+            for stack, pos in enumerate(range(1, len(level), 4), 1):
                 crate = level[pos]
                 if crate != ' ':
-                    self.initial[str(stack)].insert(0,crate)
+                    self.initial[str(stack)].insert(0, crate)
 
-    def reset(self):
+    def initialize(self):
         self.stacks = OrderedDict()
         for key, value in self.initial.items():
             self.stacks[key] = value.copy()
@@ -50,10 +50,10 @@ class Stacks:
     def move_9000_crates(self, move: Move) -> None:
         for i in range(move.qty):
             crate = self.stacks[move.src].pop(0)
-            self.stacks[move.dst].insert(0,crate)
+            self.stacks[move.dst].insert(0, crate)
 
     def execute_9000(self, moves: list[Move]) -> None:
-        self.reset()
+        self.initialize()
         for move in moves:
             self.move_9000_crates(move)
 
@@ -62,7 +62,7 @@ class Stacks:
         del self.stacks[move.src][:move.qty]
 
     def execute_9001(self, moves: list[Move]) -> None:
-        self.reset()
+        self.initialize()
         for move in moves:
             self.move_9001_crates(move)
 
@@ -77,24 +77,30 @@ class Orders:
     stacks: Stacks
     moves: list[Move]
 
+    def part1(self) -> str:
+        self.stacks.execute_9000(self.moves)
+        return self.stacks.top_crate_names
+
+    def part2(self) -> str:
+        self.stacks.execute_9001(self.moves)
+        return self.stacks.top_crate_names
+
 
 class Day05(Puzzle):
 
     def parse_data(self, filename):
         lines = self.read_lines(filename)
-        marker = lines.index('\n')
+        blank_line = lines.index('\n')
 
-        stacks = Stacks(lines[:marker])
-        moves = [Move.parse(line) for line in lines[marker + 1:]]
+        stacks = Stacks(lines[:blank_line])
+        moves = [Move.parse(line) for line in lines[blank_line + 1:]]
         return Orders(stacks, moves)
 
     def part1(self, orders: Orders) -> str:
-        orders.stacks.execute_9000(orders.moves)
-        return orders.stacks.top_crate_names
+        return orders.part1()
 
     def part2(self, orders: Orders) -> str:
-        orders.stacks.execute_9001(orders.moves)
-        return orders.stacks.top_crate_names
+        return orders.part2()
 
 
 puzzle = Day05()
