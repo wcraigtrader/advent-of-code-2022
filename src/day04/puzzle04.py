@@ -39,10 +39,10 @@ class Day04(Puzzle):
         return [CleanupRange(line) for line in self.read_stripped(filename)]
 
     def part1(self, data) -> int:
-        return sum(1 for datum in data if datum.wholly_contained)
+        return len(list(filter(lambda x: x.wholly_contained, data)))
 
     def part2(self, data) -> int:
-        return sum(1 for datum in data if datum.partial_overlap)
+        return len(list(filter(lambda x: x.partial_overlap, data)))
 
 
 puzzle = Day04()
