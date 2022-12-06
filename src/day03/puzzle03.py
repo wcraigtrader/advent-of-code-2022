@@ -10,7 +10,8 @@ class RuckSack:
 
     contents: str
 
-    def __post_init__(self):
+    @property
+    def common_items(self):
         self.count = len(self.contents)
         assert self.count % 2 == 0, f'{self.count} items in {self.contents}'
 
@@ -22,17 +23,11 @@ class RuckSack:
         self.set1 = set(self.compartment1)
         self.set2 = set(self.compartment2)
 
-    @property
-    def common_items(self):
         return list(self.set1 & self.set2)
 
     @property
-    def common_priorities(self):
-        return list(map(self.priority, self.common_items))
-
-    @property
     def total_common_priorities(self):
-        return sum(self.common_priorities)
+        return sum(list(map(self.priority, self.common_items)))
 
     @staticmethod
     def priority(item: str) -> int:
