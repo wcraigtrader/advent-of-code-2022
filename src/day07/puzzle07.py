@@ -2,21 +2,19 @@
 
 from common import *
 from dataclasses import dataclass, field
-
+from functools import cached_property
 
 @dataclass
 class Directory:
     parent: "Directory" = None
     contents: dict = field(default_factory=dict)
 
-    @property
+    @cached_property
     def size(self) -> int:
-        size = 0
-        for value in self.contents.values():
-            size += value.size if isinstance(value, Directory) else value
-        return size
+        return sum(value.size if isinstance(value, Directory) else value 
+            for value in self.contents.values())
 
-    @property
+    @cached_property
     def subdirectories(self) -> list["Directory"]:
         results = []
         for value in self.contents.values():
