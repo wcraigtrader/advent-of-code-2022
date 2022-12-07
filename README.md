@@ -6,3 +6,8 @@ Run each puzzle like this:
 ```shell
 PYTHONPATH=src python3 src/day01/puzzle01.py
 ```
+
+Run all puzzles like this:
+```shell
+bash run_all.sh
+```
