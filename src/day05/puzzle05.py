@@ -1,7 +1,5 @@
 #! /usr/bin/env python3
 
-import re
-
 from dataclasses import dataclass
 from collections import OrderedDict
 
@@ -17,12 +15,11 @@ class Move:
 
     @classmethod
     def parse(cls, line):
-        match = re.match('move (\\d+) from (\\d+) to (\\d+)', line)
-        if not match:
-            raise ValueError(f'Could not parse: {line}')
+        match line.strip().split(' '):
+            case 'move', qty, 'from', src, 'to', dst:
+                return cls(int(qty), src, dst)
 
-        qty, src, dst = match.groups()
-        return cls(int(qty), src, dst)
+        raise ValueError(f'Could not parse: {line}')
 
 
 class Stacks:

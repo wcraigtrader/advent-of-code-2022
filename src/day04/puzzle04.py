@@ -1,22 +1,17 @@
 #! /usr/bin/env python3
 
+import re
+
 from common import *
 from dataclasses import dataclass
 
 
 @dataclass
 class CleanupRange:
-    entry: str
-
-    def __post_init__(self):
-        first, _, second = self.entry.partition(',')
-        head1, _, tail1 = first.partition('-')
-        self.head1, self.tail1 = int(head1), int(tail1)
-        head2, _, tail2 = second.partition('-')
-        self.head2, self.tail2 = int(head2), int(tail2)
-
-        assert self.head1 <= self.tail1
-        assert self.head2 <= self.tail2
+    head1: int
+    tail1: int
+    head2: int
+    tail2: int
 
     @property
     def wholly_contained(self) -> bool:
@@ -32,11 +27,16 @@ class CleanupRange:
         t4 = self.head2 <= self.tail1 <= self.tail2
         return t1 or t2 or t3 or t4
 
+    @classmethod
+    def parse(cls, line):
+        h1, t1, h2, t2 = map(int, re.split('[-,]', line))
+        return cls(h1, t1, h2, t2)
+
 
 class Day04(Puzzle):
 
     def parse_data(self, filename):
-        return [CleanupRange(line) for line in self.read_stripped(filename)]
+        return [CleanupRange.parse(line) for line in self.read_stripped(filename)]
 
     def part1(self, data) -> int:
         return len(list(filter(lambda x: x.wholly_contained, data)))
