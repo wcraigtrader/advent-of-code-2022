@@ -21,20 +21,16 @@ class Grid:
 
     def visible(self, r, c):
         height = self.trees[r][c]
-        row = self.row(r)
-        col = self.col(c)
+        row, col = self.row(r), self.col(c)
         highest = [max(row[:c]), max(row[c + 1:]), max(col[:r]), max(col[r + 1:])]
         visible = height > min(highest)
         return visible
 
     def scenic(self, r, c):
         height = self.trees[r][c]
-        row = self.row(r)
-        col = self.col(c)
-        up = list(reversed(col[:r]))
-        down = col[r + 1:]
-        left = list(reversed(row[:c]))
-        right = row[c + 1:]
+        row, col = self.row(r), self.col(c)
+        up, down = list(reversed(col[:r])), col[r + 1:]
+        left, right = list(reversed(row[:c])), row[c + 1:]
 
         score = 1
         for sight in (up, down, left, right):
