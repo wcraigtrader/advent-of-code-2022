@@ -11,8 +11,8 @@ class Move:
 
     @classmethod
     def parse(cls, line):
-        d, l = line.split(' ')
-        return cls(d, int(l))
+        direction, length = line.split(' ')
+        return cls(direction, int(length))
 
 
 @dataclass(frozen=True)
@@ -62,9 +62,6 @@ class Position:
         else:
             result = self
 
-        if not result._touching(goal):
-            pass
-
         return result
 
     def _touching(self, other: 'Position') -> bool:
@@ -77,7 +74,6 @@ class Rope:
         self.moves = moves
         self.positions: list[Position] = None
         self.track: set[Position] = None
-        self.trace = False
 
     def twist(self, length):
         self.positions = [Position(0,0)] * length
@@ -92,11 +88,6 @@ class Rope:
                 for knot in range(1, length):
                     self.positions[knot] = self.positions[knot] >> self.positions[knot-1]
                 self.track.add(self.positions[tail])
-
-            if self.trace:
-                print(move)
-                self.print(list(self.track), '#')
-                pass
 
     def print(self, positions, mark=None):
         xl = min(0, min(p.x for p in positions))
@@ -140,4 +131,4 @@ class Day09(Puzzle):
 
 
 puzzle = Day09('real.data', 'test1.data', 'test2.data')
-puzzle.run([13, 88], [1, 36])
+puzzle.run(13, [1, 36])
