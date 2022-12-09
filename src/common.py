@@ -6,14 +6,17 @@ import time
 class Puzzle(object):
     """This is a framework for solving each day's puzzle"""
 
-    def __init__(self, datafile: str = 'real.data', testfile: str = 'test.data'):
+    def __init__(self, datafile: str = 'real.data', *testfiles: str):
         self.base = os.path.dirname(sys.argv[0])
 
         self.datafile = datafile
-        self.testfile = testfile
+        self.testfiles = testfiles
+
+        if len(testfiles) == 0:
+            self.testfiles = [ 'test.data' ]
 
         self.data = None
-        self.test = None
+        self.tests = None
 
         self._started = 0
         self._elapsed = 0
@@ -50,18 +53,24 @@ class Puzzle(object):
     def run(self, test1: int | list = None, test2: int | list = None) -> None:
         """Load data and run tests"""
 
-        self.test = self.parse_data(self.testfile)
+        self.tests = [self.parse_data(tf) for tf in self.testfiles]
         self.data = self.parse_data(self.datafile)
 
         if test1 is not None:
-            if isinstance(test1, list) and len(test1) == len(self.test):
-                self.multi_test('part1', test1)
+            if isinstance(test1, list):
+                if len(self.tests) == len(test1):
+                    self.multi_test('part1', test1, self.tests, True)
+                else:
+                    self.multi_test('part1', test1, self.tests[0], False)
             else:
                 self.single_test('part1', test1)
 
         if test2 is not None:
-            if isinstance(test2, list) and len(test2) == len(self.test):
-                self.multi_test('part2', test2)
+            if isinstance(test2, list):
+                if len(self.tests) == len(test2):
+                    self.multi_test('part2', test2, self.tests, True)
+                else:
+                    self.multi_test('part2', test2, self.tests[0], False)
             else:
                 self.single_test('part2', test2)
 
@@ -71,7 +80,7 @@ class Puzzle(object):
         method = getattr(self, name)
 
         self.start()
-        test_result = method(self.test)
+        test_result = method(self.tests[0])
         self.stop()
         print(f'{self.elapsed}: {name} test = {test_result}')
         assert test_result == expected, f'Was {test_result}, should have been {expected}'
@@ -81,12 +90,12 @@ class Puzzle(object):
         self.stop()
         print(f'{self.elapsed}: {name} real = {real_result}')
 
-    def multi_test(self, name: str, expectations: list):
+    def multi_test(self, name: str, expectations: list, testdata: list, multifile: bool):
         """Execute multiple test runs and one real run for part1 or part2"""
 
         method = getattr(self, name)
 
-        for i, (test, expected) in enumerate(zip(self.test, expectations), 1):
+        for i, (test, expected) in enumerate(zip(testdata, expectations), 1):
             self.start()
             result = method(test)
             self.stop()
@@ -94,7 +103,7 @@ class Puzzle(object):
             print(f'{self.elapsed}: {name} test {i}, {expected} == {result} => {passed}')
 
         self.start()
-        real_result = method(self.data[0])
+        real_result = method(self.data) if multifile else method(self.data[0])
         self.stop()
         print(f'{self.elapsed}: {name} real = {real_result}')
 
