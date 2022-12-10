@@ -3,7 +3,7 @@ import sys
 import time
 
 
-class Puzzle(object):
+class Puzzle:
     """This is a framework for solving each day's puzzle"""
 
     def __init__(self, datafile: str = 'real.data', *testfiles: str):
