@@ -1,17 +1,21 @@
 #! /usr/bin/env python3
 
 import re
+from dataclasses import dataclass
+from enum import Enum
 
 from common import *
-from dataclasses import dataclass
 
 number = int
+
+Operation = Enum('Operation', 'SQUARE MULTIPLY ADD')
+
 
 @dataclass
 class Monkey:
     id: int
     items: list[number]
-    operation: str
+    operation: Operation
     operand: number
     divisor: number
     passed: int
@@ -19,14 +23,11 @@ class Monkey:
     count: int = 0
 
     def inspect(self, worry: number) -> number:
-        if self.operation == 'square':
-            new = np.power(worry, 2, dtype=number)
-        elif self.operation == 'multiply':
-            try:
-                new = worry * self.operand
-            except FloatingPointError:
-                new = int(worry) * int(self.operand)
-        elif self.operation == 'add':
+        if self.operation == Operation.SQUARE:
+            new = worry * worry
+        elif self.operation == Operation.MULTIPLY:
+            new = worry * self.operand
+        elif self.operation == Operation.ADD:
             new = worry + self.operand
         return new
 
@@ -52,11 +53,11 @@ class Monkey:
                 case 'Starting', 'items', *values:
                     items = list(map(number, values))
                 case 'Operation', 'new', '=', 'old', '*', 'old':
-                    operation = 'square'
+                    operation = Operation.SQUARE
                 case 'Operation', 'new', '=', 'old', '*', value:
-                    operation, operand = 'multiply', number(value)
+                    operation, operand = Operation.MULTIPLY, number(value)
                 case 'Operation', 'new', '=', 'old', '+', value:
-                    operation, operand = 'add', number(value)
+                    operation, operand = Operation.ADD, number(value)
                 case 'Test', 'divisible', 'by', value:
                     divisor = number(value)
                 case 'If', 'true', 'throw', 'to', 'monkey', value:
@@ -87,20 +88,11 @@ class Monkeys:
     def initialize(self):
         self.monkeys = [monkey.clone() for monkey in self.initial]
 
-    def inspect(self, monkey: Monkey, worry: number) -> number:
-        if monkey.operation == 'square':
-            new = worry * worry
-        elif monkey.operation == 'multiply':
-            new = worry * monkey.operand
-        elif monkey.operation == 'add':
-            new = worry + monkey.operand
-        return new % self.modulo
-
-    def round_with_relief(self, relief=None):
+    def round_with_relief(self):
         for monkey in self.monkeys:
             monkey.count += len(monkey.items)
             for worry in monkey.items:
-                worry = number(self.inspect(monkey, worry)/relief)
+                worry = number(monkey.inspect(worry)/number(3))
                 destination = monkey.passed if worry % monkey.divisor == number(0) else monkey.failed
                 self.monkeys[destination].append(worry)
             monkey.items = []
@@ -109,7 +101,7 @@ class Monkeys:
         for monkey in self.monkeys:
             monkey.count += len(monkey.items)
             for worry in monkey.items:
-                worry = self.inspect(monkey, worry)
+                worry = monkey.inspect(worry) % self.modulo
                 destination = monkey.passed if worry % monkey.divisor == number(0) else monkey.failed
                 self.monkeys[destination].append(worry)
             monkey.items = []
@@ -121,9 +113,9 @@ class Monkeys:
 
     @property
     def two_most_active(self):
-        temp = self.monkeys.copy()
-        temp.sort(key=lambda x: x.count, reverse=True)
-        return temp[0].count * temp[1].count
+        counts = [m.count for m in self.monkeys]
+        counts.sort()
+        return counts[-2] * counts[-1]
 
 
 class Day11(Puzzle):
@@ -133,21 +125,15 @@ class Day11(Puzzle):
 
     def part1(self, data) -> int:
         data.initialize()
-        for round in range(20):
-            data.round_with_relief(number(3))
+        for _ in range(20):
+            data.round_with_relief()
         return data.two_most_active
 
     def part2(self, data) -> int:
         data.initialize()
-        for round in range(10000):
-            # if round in [1, 20, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]:
-            #     print(f'== After round {round} ==')
-            #     data.print()
-
+        for _ in range(10000):
             data.round()
 
-        # data.print()
-        
         return data.two_most_active
 
 
