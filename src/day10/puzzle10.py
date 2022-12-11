@@ -11,12 +11,13 @@ class Signal:
         x = 1
         for line in lines:
             tokens = line.split(' ')
-            if tokens[0] == 'addx':
+            op = tokens[0]
+            if op == 'addx':
                 value = int(tokens[1])
                 self.cycle.append(x)
                 self.cycle.append(x)
                 x += int(value)
-            elif tokens[0] == 'noop':
+            elif op == 'noop':
                 self.cycle.append(x)
 
     @property
