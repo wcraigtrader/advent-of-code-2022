@@ -118,7 +118,7 @@ class Rope:
 class Day09(Puzzle):
 
     def parse_data(self, filename):
-        moves = [Move.parse(line) for line in self.read_stripped(filename)]
+        moves = list(map(Move.parse, self.read_stripped(filename)))
         return Rope(moves)
 
     def part1(self, data) -> int:

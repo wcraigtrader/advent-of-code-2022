@@ -90,7 +90,7 @@ class Day05(Puzzle):
         blank_line = lines.index('\n')
 
         stacks = Stacks(lines[:blank_line])
-        moves = [Move.parse(line) for line in lines[blank_line + 1:]]
+        moves = list(map(Move.parse, lines[blank_line + 1:]))
         return Orders(stacks, moves)
 
     def part1(self, orders: Orders) -> str:

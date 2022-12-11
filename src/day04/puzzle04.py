@@ -36,7 +36,7 @@ class CleanupRange:
 class Day04(Puzzle):
 
     def parse_data(self, filename):
-        return [CleanupRange.parse(line) for line in self.read_stripped(filename)]
+        return list(map(CleanupRange.parse,  self.read_stripped(filename)))
 
     def part1(self, data) -> int:
         return len(list(filter(lambda x: x.wholly_contained, data)))

@@ -43,7 +43,7 @@ class RuckSack:
 class Day03(Puzzle):
 
     def parse_data(self, filename):
-        return [RuckSack(line) for line in self.read_stripped(filename)]
+        return list(map(RuckSack, self.read_stripped(filename)))
 
     def part1(self, data) -> int:
         return sum(sack.total_common_priorities for sack in data)

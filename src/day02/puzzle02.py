@@ -42,11 +42,15 @@ class Advice:
         outcome = ((response - opponent + 1) % 3) * 3
         return outcome
 
+    @classmethod
+    def parse(cls, line: str) -> "Advice":
+        opponent, advice = line.split(' ')
+        return cls(opponent, advice)
 
 class Day02(Puzzle):
 
     def parse_data(self, filename):
-        return [Advice(*(line.split(' '))) for line in self.read_stripped(filename)]
+        return list(map(Advice.parse, self.read_stripped(filename)))
 
     def part1(self, data) -> int:
         return sum(match.score1 for match in data)
