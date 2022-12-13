@@ -15,7 +15,8 @@ class Position:
         return Position(self.row + other.row, self.col + other.col)
 
 class Map(AstarSearch):
-
+    """The map can generate optimum traversal paths"""
+    
     DIRECTIONS = [Position(-1, 0), Position(0, -1), Position(1, 0), Position(0, 1)]
 
     def __init__(self, raw: str):

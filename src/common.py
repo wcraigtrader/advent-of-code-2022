@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from functools import cache
 from typing import Any
 
+
 class Puzzle:
     """This is a framework for solving each day's puzzle"""
 
@@ -16,7 +17,7 @@ class Puzzle:
         self.testfiles = testfiles
 
         if len(testfiles) == 0:
-            self.testfiles = [ 'test.data' ]
+            self.testfiles = ['test.data']
 
         self.data = None
         self.tests = None
@@ -132,33 +133,59 @@ class Puzzle:
         return f'{self._elapsed:6.3f} ms'
 
 
-
 @dataclass(order=True, unsafe_hash=True)
 class AstarNode:
+    """A node wrapper for A*Search
+    
+    This class is hashable, but hashes only on the node.
+    This class is sortable, but only on the priority.
+    """
+
     node: Any = field(compare=False, hash=True)
-    priority : float = field(compare=True, hash=False, default=0.0)
-    parent: 'AstarNode' = field(compare=False, default=None, repr=False)
+    priority: float = field(compare=True, hash=False, default=0.0)
+    backtrack: 'AstarNode' = field(compare=False, default=None, repr=False)
 
     def __eq__(self, other: 'AstarNode') -> bool:
         return self.node == other.node
 
+
 class AstarSearch:
-    
+    """Implement the A* search algorithm for Any type of node
+
+    Each node in the search graph / grid gets wrapped in an AstarNode
+    as it becomes visible in the search.
+
+    Subclass this and implement the `neighbors`, `distance`, and `heuristic` methods.
+    Call `traverse` to
+
+    Notes: https://en.wikipedia.org/wiki/A*_search_algorithm
+    """
+
     UNSEEN = 999_999_999
 
-    def _find(self, node: Any) -> AstarNode:
-        if node not in self.lookup:
-            self.lookup[node] = AstarNode(node, self.UNSEEN)
-        return self.lookup[node]
-
     def _clear(self):
-        self.lookup: dict[Any, AstarNode] = {}
+        self._lookup: dict[Any, AstarNode] = {}
+
+    def _find(self, node: Any) -> AstarNode:
+        if node not in self._lookup:
+            self._lookup[node] = AstarNode(node, self.UNSEEN)
+        return self._lookup[node]
+
+    def _reconstruct_path(self, current: AstarNode) -> list[Any]:
+        path = [current.node]
+        while current.backtrack:
+            current = current.backtrack
+            path.append(current.node)
+
+        path.reverse()
+
+        return path
 
     def neighbors(self, node: Any) -> list[Any]:
         """Return a list of all of the neighbors of a node"""
         raise NotImplementedError('neighbors function')
 
-    def distance(self, one: Any, two: Any) -> float:
+    def distance(self, src: Any, dst: Any) -> float:
         """Distance between two nodes"""
         raise NotImplementedError('distance function')
 
@@ -177,7 +204,7 @@ class AstarSearch:
 
         exploring: list[AstarNode] = []
         heappush(exploring, a_origin)
-        
+
         g_score: dict[AstarNode, int] = defaultdict(lambda: self.UNSEEN)
         g_score[a_origin] = 0
 
@@ -190,20 +217,10 @@ class AstarSearch:
                 neighbor = self._find(node)
                 tentative = g_score[current] + self.distance(current.node, neighbor.node)
                 if tentative < g_score[neighbor]:
-                    neighbor.parent = current
+                    neighbor.backtrack = current
                     g_score[neighbor] = tentative
                     neighbor.priority = tentative + self.heuristic(neighbor.node)
                     if neighbor not in exploring:
                         heappush(exploring, neighbor)
 
         return None
-
-    def _reconstruct_path(self, current: AstarNode) -> list[Any]:
-        path = [ current.node ]
-        while current.parent:
-            current = current.parent
-            path.append(current.node)
-
-        path.reverse()
-
-        return path
