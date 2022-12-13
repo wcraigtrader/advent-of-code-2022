@@ -2,6 +2,9 @@ import os
 import sys
 import time
 
+from dataclasses import dataclass, field
+from functools import cache
+from typing import Any
 
 class Puzzle:
     """This is a framework for solving each day's puzzle"""
@@ -36,6 +39,12 @@ class Puzzle:
         raise NotImplementedError('part2')
 
     # ----- Useful methods for parsing data files -----------------------------
+
+    def read_blob(self, filename: str) -> str:
+        """Read a data file, returning its entire contents as a string"""
+
+        with open(os.path.join(self.base, filename), 'r') as df:
+            return df.read()
 
     def read_lines(self, filename: str) -> list[str]:
         """Read a data file, returning a list, one entry per line"""
@@ -121,3 +130,80 @@ class Puzzle:
     def elapsed(self):
         """Format the elapsed time in milliseconds"""
         return f'{self._elapsed:6.3f} ms'
+
+
+
+@dataclass(order=True, unsafe_hash=True)
+class AstarNode:
+    node: Any = field(compare=False, hash=True)
+    priority : float = field(compare=True, hash=False, default=0.0)
+    parent: 'AstarNode' = field(compare=False, default=None, repr=False)
+
+    def __eq__(self, other: 'AstarNode') -> bool:
+        return self.node == other.node
+
+class AstarSearch:
+    
+    UNSEEN = 999_999_999
+
+    def _find(self, node: Any) -> AstarNode:
+        if node not in self.lookup:
+            self.lookup[node] = AstarNode(node, self.UNSEEN)
+        return self.lookup[node]
+
+    def _clear(self):
+        self.lookup: dict[Any, AstarNode] = {}
+
+    def neighbors(self, node: Any) -> list[Any]:
+        """Return a list of all of the neighbors of a node"""
+        raise NotImplementedError('neighbors function')
+
+    def distance(self, one: Any, two: Any) -> float:
+        """Distance between two nodes"""
+        raise NotImplementedError('distance function')
+
+    def heuristic(self, node: Any) -> float:
+        """Estimate the cost to get to the goal from a node"""
+        raise NotImplementedError('heuristic function')
+
+    def traverse(self, origin: Any, target: Any) -> list[Any]:
+        from collections import defaultdict
+        from heapq import heappush, heappop
+
+        self._clear()
+
+        a_origin = self._find(origin)
+        a_target = self._find(target)
+
+        exploring: list[AstarNode] = []
+        heappush(exploring, a_origin)
+        
+        g_score: dict[AstarNode, int] = defaultdict(lambda: self.UNSEEN)
+        g_score[a_origin] = 0
+
+        while len(exploring):
+            current = heappop(exploring)
+            if current == a_target:
+                return self._reconstruct_path(current)
+
+            for node in self.neighbors(current.node):
+                neighbor = self._find(node)
+                tentative = g_score[current] + self.distance(current.node, neighbor.node)
+                if tentative < g_score[neighbor]:
+                    neighbor.parent = current
+                    g_score[neighbor] = tentative
+                    neighbor.priority = tentative + self.heuristic(neighbor.node)
+                    if neighbor not in exploring:
+                        heappush(exploring, neighbor)
+
+        return None
+
+    def _reconstruct_path(self, current: AstarNode) -> list[Any]:
+        path = [ current.node ]
+        while current.parent:
+            current = current.parent
+            path.append(current.node)
+
+        path.reverse()
+
+        return path
