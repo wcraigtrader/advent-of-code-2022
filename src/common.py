@@ -63,7 +63,10 @@ class Puzzle:
     def run(self, test1: int | list = None, test2: int | list = None) -> None:
         """Load data and run tests"""
 
+        print('Parsing test data ...')
         self.tests = [self.parse_data(tf) for tf in self.testfiles]
+
+        print('Parsing real data ...')
         self.data = self.parse_data(self.datafile)
 
         if test1 is not None:
@@ -130,7 +133,7 @@ class Puzzle:
     @property
     def elapsed(self):
         """Format the elapsed time in milliseconds"""
-        return f'{self._elapsed:6.3f} ms'
+        return f'{self._elapsed:10,.3f} ms'
 
 
 @dataclass(order=True, unsafe_hash=True)
