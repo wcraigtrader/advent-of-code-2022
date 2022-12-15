@@ -60,7 +60,7 @@ class Puzzle:
 
     # ----- Test runner -------------------------------------------------------
 
-    def run(self, test1: int | list = None, test2: int | list = None) -> None:
+    def run(self, test1: int | dict | list = None, test2: int | dict | list = None) -> None:
         """Load data and run tests"""
 
         print('Parsing test data ...')
@@ -70,7 +70,9 @@ class Puzzle:
         self.data = self.parse_data(self.datafile)
 
         if test1 is not None:
-            if isinstance(test1, list):
+            if isinstance(test1, dict):
+                self.map_test('part1', **test1)
+            elif isinstance(test1, list):
                 if len(self.tests) == len(test1):
                     self.multi_test('part1', test1, self.tests, True)
                 else:
@@ -79,7 +81,9 @@ class Puzzle:
                 self.single_test('part1', test1)
 
         if test2 is not None:
-            if isinstance(test2, list):
+            if isinstance(test2, dict):
+                self.map_test('part1', test2)
+            elif isinstance(test2, list):
                 if len(self.tests) == len(test2):
                     self.multi_test('part2', test2, self.tests, True)
                 else:
@@ -87,7 +91,7 @@ class Puzzle:
             else:
                 self.single_test('part2', test2)
 
-    def single_test(self, name: str, expected):
+    def single_test(self, name: str, expected) -> None:
         """Execute one test run and one real run for part1 or part2"""
 
         method = getattr(self, name)
@@ -103,7 +107,7 @@ class Puzzle:
         self.stop()
         print(f'{self.elapsed}: {name} real = {real_result}')
 
-    def multi_test(self, name: str, expectations: list, testdata: list, multifile: bool):
+    def multi_test(self, name: str, expectations: list, testdata: list, multifile: bool) -> None:
         """Execute multiple test runs and one real run for part1 or part2"""
 
         method = getattr(self, name)
@@ -119,6 +123,23 @@ class Puzzle:
         real_result = method(self.data) if multifile else method(self.data[0])
         self.stop()
         print(f'{self.elapsed}: {name} real = {real_result}')
+
+    def map_test(self, name: str, **keywords: dict) -> None:
+        """Execute one test run and one real run for part1 or part2"""
+
+        method = getattr(self, name)
+        expected = keywords.get('expected')
+        self.start()
+        test_result = method(self.tests[0], keywords.get('test', None))
+        self.stop()
+        print(f'{self.elapsed}: {name} test = {test_result}')
+        assert test_result == expected, f'Was {test_result}, should have been {expected}'
+
+        self.start()
+        real_result = method(self.data, keywords.get('real', None))
+        self.stop()
+        print(f'{self.elapsed}: {name} real = {real_result}')
+
 
     # ----- Internal methods --------------------------------------------------
 
